@@ -21,17 +21,19 @@ class ProductsController < ApplicationController
 
   # POST /products or /products.json
   def create
-    @product = Product.new(product_params)
+    project = Project.find params[:project_id]
+    @product = project.products.new
+    base_64_image = params[:image].gsub!(/^data:.*,/, '')
+    decoded_image = Base64.decode64(base_64_image)
 
-    respond_to do |format|
-      if @product.save
-        format.html { redirect_to product_url(@product), notice: "Product was successfully created." }
-        format.json { render :show, status: :created, location: @product }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @product.errors, status: :unprocessable_entity }
-      end
-    end
+    unique_string = SecureRandom.urlsafe_base64(10)
+    @product.image.attach(
+      io: StringIO.new(decoded_image),
+      filename: "#{unique_string}.jpeg"
+    )
+
+    @product.save!
+    render status: :created, json: @product
   end
 
   # PATCH/PUT /products/1 or /products/1.json
