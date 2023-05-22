@@ -1,12 +1,9 @@
-<div id="<%= dom_id product %>">
+<div>
   <p>
     <strong>Partnumber:</strong>
-    <%= product.partnumber %>
+    <%= product.partnumber || 'unknown' %>
   </p>
 
-  <p>
-    <strong>Project:</strong>
-    <%= product.project_id %>
-  </p>
+  <%= image_tag product.image %>
 
 </div>

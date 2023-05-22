@@ -1,10 +1,29 @@
 <p style="color: green"><%= notice %></p>
 
-<%= render @project %>
+<h1>
+  <%= @project.name %>
+</h1>
+
+<%= content_tag :div, data: { controller: 'camera' } do %>
+  <h2>
+    Products
+    <small>
+      <button id="start-camera">Add Products</button>
+    </small>
+  </h2>
+  <div id="camera-stream" style="display: none;">
+    <video id="video" width="320" height="240" autoplay muted playsinline style="display: block"></video>
+    <button id="click-photo" data-new-product-url="<%= project_products_url(@project, format: 'json') %>">Click Photo</button>
+    <canvas id="canvas" width="320" height="240" style="display: none"></canvas>
+  </div>
+  <%= turbo_stream_from "#{@project.id}_products" %>
+  <%= content_tag :div, id: "products" do %>
+    <% @project.products.each do |product| %>
+      <%= render product %>
+    <% end %>
+  <% end %>
+<% end %>
 
 <div>
-  <%= link_to "Edit this project", edit_project_path(@project) %> |
   <%= link_to "Back to projects", projects_path %>
-
-  <%= button_to "Destroy this project", @project, method: :delete %>
 </div>
